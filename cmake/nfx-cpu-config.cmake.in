@@ -1,0 +1,42 @@
+#==============================================================================
+# nfx-cpu - CMake Package Configuration
+#==============================================================================
+# This file provides CMake targets for the nfx-cpu library.
+# 
+# Usage:
+#   find_package(nfx-cpu REQUIRED)
+#   target_link_libraries(your_target PRIVATE nfx-cpu::nfx-cpu)  # Header-only interface library
+#
+# Available target:
+#   nfx-cpu::nfx-cpu - Header-only interface library (CPU feature detection and system identification)
+#==============================================================================
+
+@PACKAGE_INIT@
+
+# Version information
+set(NFX_CPU_VERSION "@PROJECT_VERSION@")
+set(NFX_CPU_VERSION_MAJOR "@PROJECT_VERSION_MAJOR@")
+set(NFX_CPU_VERSION_MINOR "@PROJECT_VERSION_MINOR@")
+set(NFX_CPU_VERSION_PATCH "@PROJECT_VERSION_PATCH@")
+
+# Installation paths (for reference)
+set_and_check(NFX_CPU_INCLUDE_DIR "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set_and_check(NFX_CPU_LIB_DIR "@PACKAGE_CMAKE_INSTALL_LIBDIR@")
+
+# Our library dependencies (none - self-contained library)
+
+# Include the targets file
+include("${CMAKE_CURRENT_LIST_DIR}/nfx-cpu-targets.cmake")
+
+# For multi-config generators, include config-specific targets if available
+if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/nfx-cpu-targets-${CMAKE_BUILD_TYPE}.cmake")
+    include("${CMAKE_CURRENT_LIST_DIR}/nfx-cpu-targets-${CMAKE_BUILD_TYPE}.cmake")
+endif()
+
+# Verify that the expected targets are available
+if(NOT TARGET nfx-cpu::nfx-cpu)
+    message(FATAL_ERROR "nfx-cpu installation is broken: interface library target not found")
+endif()
+
+# Check that the requested components are available
+check_required_components(nfx-cpu)
