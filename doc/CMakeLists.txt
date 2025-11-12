@@ -219,7 +219,7 @@ if(Doxygen_FOUND)
 	set(DOXYGEN_DOT_CLEANUP              "YES")
 
 	# --- Documentation Target Definition ---
-	doxygen_add_docs(documentation
+	doxygen_add_docs(nfx-cpu-documentation
 		${NFX_CPU_INCLUDE_DIR}/nfx
 		${NFX_CPU_DIR}/benchmark/README.md
 		${NFX_CPU_DIR}/CHANGELOG.md
@@ -231,11 +231,11 @@ if(Doxygen_FOUND)
 	)
 
 	# Create index.html shortcut in doc directory
-	if(TARGET documentation)
+	if(TARGET nfx-cpu-documentation)
 		if(WIN32)
 			# Create Windows .cmd batch
 			add_custom_command(
-				TARGET documentation
+				TARGET nfx-cpu-documentation
 				POST_BUILD
 				COMMAND ${CMAKE_COMMAND} -E echo "@echo off" > "${CMAKE_CURRENT_BINARY_DIR}/index.html.cmd"
 				COMMAND ${CMAKE_COMMAND} -E echo "start \"\" \"%~dp0html\\index.html\"" >> "${CMAKE_CURRENT_BINARY_DIR}/index.html.cmd"
@@ -245,7 +245,7 @@ if(Doxygen_FOUND)
 		else()
 			# Create symlink on Unix-like systems
 			add_custom_command(
-				TARGET documentation
+				TARGET nfx-cpu-documentation
 				POST_BUILD
 				COMMAND ${CMAKE_COMMAND} -E create_symlink
 					"html/index.html"
