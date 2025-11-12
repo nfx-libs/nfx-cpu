@@ -113,9 +113,9 @@ namespace nfx::cpu
 			xcr0 = _xgetbv( 0 );
 #elif defined( __GNUC__ ) || defined( __clang__ )
 			// Use inline assembly to avoid requiring -mxsave flag
-			unsigned int eax, edx;
-			__asm__ __volatile__( "xgetbv" : "=a"( eax ), "=d"( edx ) : "c"( 0 ) : );
-			xcr0 = ( static_cast<unsigned long long>( edx ) << 32 ) | eax;
+			unsigned int xcr0_eax, xcr0_edx;
+			__asm__ __volatile__( "xgetbv" : "=a"( xcr0_eax ), "=d"( xcr0_edx ) : "c"( 0 ) : );
+			xcr0 = ( static_cast<unsigned long long>( xcr0_edx ) << 32 ) | xcr0_eax;
 #else
 			return false;
 #endif
@@ -171,9 +171,9 @@ namespace nfx::cpu
 			xcr0 = _xgetbv( 0 );
 #elif defined( __GNUC__ ) || defined( __clang__ )
 			// Use inline assembly to avoid requiring -mxsave flag
-			unsigned int eax, edx;
-			__asm__ __volatile__( "xgetbv" : "=a"( eax ), "=d"( edx ) : "c"( 0 ) : );
-			xcr0 = ( static_cast<unsigned long long>( edx ) << 32 ) | eax;
+			unsigned int xcr0_eax, xcr0_edx;
+			__asm__ __volatile__( "xgetbv" : "=a"( xcr0_eax ), "=d"( xcr0_edx ) : "c"( 0 ) : );
+			xcr0 = ( static_cast<unsigned long long>( xcr0_edx ) << 32 ) | xcr0_eax;
 #else
 			return false;
 #endif
