@@ -118,7 +118,7 @@ jobs:
             -DNFX_CPU_BUILD_DOCUMENTATION=ON
 
       - name: Build Documentation
-        run: cmake --build build --target documentation
+        run: cmake --build build --target nfx-cpu-documentation
 
       - name: Upload documentation artifact
         uses: actions/upload-artifact@v5
