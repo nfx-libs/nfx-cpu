@@ -339,7 +339,7 @@ See [TODO.md](TODO.md) for upcoming features and project roadmap.
 
 ## Changelog
 
-See the [changelog](CHANGELOG.md) for a detailed history of changes, new features, and bug fixes.
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes, new features, and bug fixes.
 
 ## License
 
