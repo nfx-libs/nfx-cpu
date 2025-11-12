@@ -90,7 +90,7 @@ include(FetchContent)
 FetchContent_Declare(
   nfx-cpu
   GIT_REPOSITORY https://github.com/nfx-libs/nfx-cpu.git
-  GIT_TAG        main  # or use specific version tag like "0.1.0"
+  GIT_TAG        main  # or use specific version tag like "0.1.1"
 )
 FetchContent_MakeAvailable(nfx-cpu)
 

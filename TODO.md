@@ -81,6 +81,8 @@ Project roadmap and task tracking for the nfx-cpu library.
 
 ### Done ✓
 
+#### v0.1.1 (2025-11-12)
+
 - [x] **CPU Feature Detection - OS Support Verification**
   - [x] Add OSXSAVE flag check for AVX/AVX2 detection
   - [x] Verify XCR0 register state (XMM/YMM bits) via `xgetbv` instruction

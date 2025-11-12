@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **CPU Feature Detection**: Refactored CPUID magic numbers into named constants in `internal` namespace
+- NIL
 
 ### Deprecated
 
@@ -25,11 +25,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **CPU Feature Detection**: Added proper OS support verification for AVX/AVX2 detection
+- NIL
 
 ### Security
 
 - NIL
+
+## [0.1.1] - 2025-11-12
+
+### Changed
+
+- **CPU Feature Detection**: Refactored CPUID magic numbers into named constants in `internal` namespace
+
+- **Documentation**: Refined README with better examples and clarifications
+
+  - Rewrote overview section to match nfx-hashing style
+  - Added x86-64 architecture requirement
+  - Clarified AVX/AVX2 OS validation requirements
+  - Improved real-world applications examples
+  - Updated verification pattern to use library functions instead of manual checks
+
+- **Build System**: Changed MSVC compiler flags from `/arch:AVX` to `/arch:AVX2` for benchmarks, samples, and tests
+
+### Fixed
+
+- **CPU Feature Detection**: Added proper OS support verification for AVX/AVX2 detection
+
+  - Check OSXSAVE flag and verify XCR0 register via xgetbv instruction
+  - Use inline assembly for GCC/Clang to avoid -mxsave flag dependency
+  - Fix MSVC AVX2 detection to use `__cpuidex()` with proper sub-leaf
+  - Prevents false positives where CPU supports AVX/AVX2 but OS doesn't save/restore the extended state
+
+- **CI/CD**:
+
+  - Split GitHub Pages build and deploy into separate jobs to fix artifact conflicts
+  - Added concurrency control with cancel-in-progress to prevent deployment clashes
+  - Updated documentation workflow to use renamed target `nfx-cpu-documentation`
+
+- **Build System**: Renamed documentation target from `documentation` to `nfx-cpu-documentation` to avoid collision
 
 ## [0.1.0] - 2025-11-11 - Initial Release
 
