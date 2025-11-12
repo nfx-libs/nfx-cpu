@@ -46,7 +46,7 @@ foreach(sample_source ${SAMPLE_SOURCES})
 		#----------------------------------------------
 
 		target_compile_options(${sample_target_name} PRIVATE
-			$<$<CXX_COMPILER_ID:MSVC>:/arch:AVX>
+			$<$<CXX_COMPILER_ID:MSVC>:/arch:AVX2>
 			$<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-msse4.2>
 		)
 

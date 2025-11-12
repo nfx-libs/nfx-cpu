@@ -14,22 +14,25 @@
 
 ## Overview
 
-nfx-cpu is the foundational library of the nfx ecosystem, providing essential CPU feature detection optimized for performance across multiple platforms and compilers. It enables automatic CPU capability detection for optimal algorithm selection at runtime. Built with modern C++20, the library offers zero-cost abstractions, constexpr support, and cross-platform compatibility.
+nfx-cpu is a CPU feature detection library optimized for performance across multiple platforms and compilers. It delivers runtime CPU capability detection with automatic feature verification, enabling optimal algorithm selection at runtime. Built with modern C++20, the library offers zero-cost abstractions, constexpr support, and cross-platform compatibility.
 
 ## Features
 
 ### 🧠 CPU Feature Detection
 
 - **SSE4.2 Detection**: Detects SSE4.2 support for hardware acceleration capabilities
-- **AVX Detection**: 256-bit floating-point SIMD operations support
-- **AVX2 Detection**: 256-bit integer SIMD operations support
+- **AVX Detection**: 256-bit floating-point SIMD operations (validates both CPU and OS support)
+- **AVX2 Detection**: 256-bit integer SIMD operations (validates both CPU and OS support via XCR0)
 - **Runtime Detection**: Dynamic CPU feature detection with cached results
 - **Single Binary**: Works optimally on both old and new CPUs without recompilation
-- **Cross-Platform**: Works with GCC, Clang and MSVC intrinsics
+- **Cross-Platform**: Supports GCC, Clang, and MSVC compiler intrinsics
 
 ### 📊 Real-World Applications
 
-- **CPU Feature Detection**: Runtime hardware capability detection for optimal algorithm selection
+- **SIMD Algorithm Dispatching**: Choose optimal string processing, cryptography, or compression routines
+- **Image/Video Processing**: Select SSE/AVX/AVX2 codepaths for filters and transformations
+- **Data Science Libraries**: Optimize matrix operations and mathematical computations
+- **Game Engines**: Runtime selection of physics, collision detection, and rendering paths
 
 ### ⚡ Performance Optimized
 
@@ -41,8 +44,9 @@ nfx-cpu is the foundational library of the nfx ecosystem, providing essential CP
 
 ### 🌍 Cross-Platform Support
 
-- Linux, Windows
-- GCC 14+, Clang 19+, MSVC 2022+
+- **Platforms**: Linux, Windows
+- **Architecture**: x86-64 (x86 SIMD features: SSE4.2, AVX, AVX2)
+- **Compilers**: GCC 14+, Clang 19+, MSVC 2022+
 - Thread-safe operations
 - Consistent behavior across platforms
 - CI/CD testing on multiple compilers
@@ -86,7 +90,7 @@ include(FetchContent)
 FetchContent_Declare(
   nfx-cpu
   GIT_REPOSITORY https://github.com/nfx-libs/nfx-cpu.git
-  GIT_TAG        main  # or use specific version tag like "v0.0.0"
+  GIT_TAG        main  # or use specific version tag like "0.1.0"
 )
 FetchContent_MakeAvailable(nfx-cpu)
 
@@ -116,25 +120,23 @@ target_link_libraries(your_target PRIVATE nfx-cpu::nfx-cpu)
 
 ### Building
 
-#### Performance Optimization
+> ⚠️ **Important**: CPU feature detection tells you what the CPU supports, but you must compile your code with appropriate flags to actually use those SIMD instructions.
 
-For best performance, compile with architecture-specific optimizations to take full advantage of detected CPU features:
+**Compiler Flags for SIMD:**
 
-**Compiler Flags:**
-
-- **GCC/Clang**: Add `-march=native` for automatic optimization or specific flags like `-msse4.2`
-- **MSVC**: Add `/arch:AVX` or similar architecture flags
+- **GCC/Clang**: `-march=native` (auto-detect) or specific flags like `-msse4.2`, `-mavx`, `-mavx2`
+- **MSVC**: `/arch:AVX` or `/arch:AVX2`
 
 **CMake Example:**
 
 ```cmake
 target_compile_options(your_target PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>:/arch:AVX>
+    $<$<CXX_COMPILER_ID:MSVC>:/arch:AVX2>
     $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-march=native>
 )
 ```
 
-**Note:** The library can detect CPU features regardless of compile flags, but your application needs appropriate compiler flags to actually use those features.
+**Build Commands:**
 
 ```bash
 # Clone the repository
@@ -154,7 +156,7 @@ cmake --build . --config Release --parallel
 ctest -C Release --output-on-failure
 
 # Run benchmarks (optional)
-./build/bin/benchmarks/BM_FeatureDetection
+./bin/benchmarks/BM_FeatureDetection
 ```
 
 ### Documentation
@@ -211,6 +213,7 @@ int main() {
 nfx-cpu detects CPU capabilities at runtime, but your application needs compile-time flags to use those features. The library provides `verify*Support()` functions that combine both checks:
 
 ```cpp
+#include <vector>
 #include <nfx/CPU.h>
 
 void processData(const std::vector<float>& data) {
@@ -241,7 +244,7 @@ void processData(const std::vector<float>& data) {
 
 ### Manual Verification Pattern (Debug Builds)
 
-For catching compile-time mismatches during development, use assertions:
+For catching compile-time mismatches during development, use the library's verify functions with assertions:
 
 ```cpp
 #include <cassert>
@@ -249,24 +252,15 @@ For catching compile-time mismatches during development, use assertions:
 
 // Verify compile flags match detected capabilities
 void verifyCompileTimeSupport() {
-#ifdef __SSE4_2__
-    // SSE4.2 compiled in - should be available at runtime
-    assert(nfx::cpu::hasSse42Support() &&
-           "Compiled with SSE4.2 but CPU doesn't support it");
-#else
-    // Not compiled with SSE4.2 - warn if CPU actually supports it
-    if (nfx::cpu::hasSse42Support()) {
-        std::cerr << "Warning: CPU supports SSE4.2 but not compiled with -msse4.2\n";
-    }
-#endif
+    // The library handles all compiler quirks internally
+    assert(nfx::cpu::verifySse42Support() || !nfx::cpu::hasSse42Support() &&
+           "CPU supports SSE4.2 but application wasn't compiled to use it");
 
-#ifdef __AVX2__
-    assert(nfx::cpu::hasAvx2Support() &&
-           "Compiled with AVX2 but CPU doesn't support it");
-#elif defined(__AVX__)
-    assert(nfx::cpu::hasAvxSupport() &&
-           "Compiled with AVX but CPU doesn't support it");
-#endif
+    assert(nfx::cpu::verifyAvxSupport() || !nfx::cpu::hasAvxSupport() &&
+           "CPU supports AVX but application wasn't compiled to use it");
+
+    assert(nfx::cpu::verifyAvx2Support() || !nfx::cpu::hasAvx2Support() &&
+           "CPU supports AVX2 but application wasn't compiled to use it");
 }
 ```
 
@@ -360,4 +354,4 @@ All dependencies are automatically fetched via CMake FetchContent when building 
 
 ---
 
-_Updated on November 11, 2025_
+_Updated on November 12, 2025_
