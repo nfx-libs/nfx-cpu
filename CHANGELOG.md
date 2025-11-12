@@ -13,9 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- NIL
+- **CPU Feature Detection**: Refactored CPUID magic numbers into named constants in `internal` namespace
 
 ### Deprecated
+
+- NIL
+
+### Removed
+
+- NIL
+
+### Fixed
+
+- **CPU Feature Detection**: Added proper OS support verification for AVX/AVX2 detection
+
+### Security
 
 - NIL
 

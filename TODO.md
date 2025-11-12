@@ -81,4 +81,9 @@ Project roadmap and task tracking for the nfx-cpu library.
 
 ### Done ✓
 
-- NIL
+- [x] **CPU Feature Detection - OS Support Verification**
+  - [x] Add OSXSAVE flag check for AVX/AVX2 detection
+  - [x] Verify XCR0 register state (XMM/YMM bits) via `xgetbv` instruction
+  - [x] Use inline assembly for GCC/Clang to avoid `-mxsave` flag dependency
+  - [x] Fix MSVC AVX2 detection to use `__cpuidex()` properly
+  - [x] Refactor magic numbers into named constants in `internal` namespace
