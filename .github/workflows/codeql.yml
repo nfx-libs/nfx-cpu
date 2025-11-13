@@ -2,19 +2,19 @@ name: CodeQL Security Analysis
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
       - "**/*.md"
       - "LICENSE.txt"
       - ".gitignore"
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
       - "**/*.md"
       - "LICENSE.txt"
       - ".gitignore"
   schedule:
-    - cron: '0 0 * * 1'  # Weekly on Mondays at midnight UTC
+    - cron: "0 0 * * 1" # Weekly on Mondays at midnight UTC
 
 jobs:
   analyze:
@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp' ]
+        language: ["cpp"]
 
     steps:
       - name: Checkout repository
