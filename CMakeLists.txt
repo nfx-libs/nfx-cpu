@@ -83,7 +83,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(nfxCpuBuildConfig)
 include(nfxCpuDependencies)
-include(nfxCpuSources)
+include(nfxCpuTarget)
 
 #----------------------------------------------
 # Installation and packaging
