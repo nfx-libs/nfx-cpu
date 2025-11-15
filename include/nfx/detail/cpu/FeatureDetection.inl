@@ -61,23 +61,29 @@ namespace nfx::cpu
 
 	inline bool hasSse42Support() noexcept
 	{
+#if defined( __SSE4_2__ ) || ( defined( _MSC_VER ) && ( defined( __AVX__ ) || defined( __AVX2__ ) ) )
+		// Compiled with SSE4.2 support - skip runtime check (compile-time guaranteed)
+		return true;
+#else
+		// No compile-time SSE4.2 - check at runtime
 		static const bool s_hasSse42 = []() {
 			bool hasSupport = false;
-#if defined( __GNUC__ ) || defined( __clang__ )
+#	if defined( __GNUC__ ) || defined( __clang__ )
 			unsigned int eax, ebx, ecx, edx;
 			if ( __get_cpuid( internal::CPUID_FEATURE_INFO_LEAF, &eax, &ebx, &ecx, &edx ) )
 			{
 				hasSupport = ( ecx & ( 1 << internal::ECX_SSE42_BIT ) ) != 0; // ECX bit 20 = SSE4.2
 			}
-#elif defined( _MSC_VER )
+#	elif defined( _MSC_VER )
 			std::array<int, 4> cpuInfo{};
 			__cpuid( cpuInfo.data(), internal::CPUID_FEATURE_INFO_LEAF );
 			hasSupport = ( cpuInfo[2] & ( 1 << internal::ECX_SSE42_BIT ) ) != 0; // ECX bit 20 = SSE4.2
-#endif
+#	endif
 			return hasSupport;
 		}();
 
 		return s_hasSse42;
+#endif
 	}
 
 	//----------------------------------------------
@@ -86,45 +92,51 @@ namespace nfx::cpu
 
 	inline bool hasAvxSupport() noexcept
 	{
+#ifdef __AVX__
+		// Compiled with AVX support - skip runtime check (compile-time guaranteed)
+		return true;
+#else
+		// No compile-time AVX - check at runtime
 		static const bool s_hasAvx = []() {
 			bool hasSupport = false;
 			bool hasXsave = false;
 
-#if defined( __GNUC__ ) || defined( __clang__ )
+#	if defined( __GNUC__ ) || defined( __clang__ )
 			unsigned int eax, ebx, ecx, edx;
 			if ( __get_cpuid( internal::CPUID_FEATURE_INFO_LEAF, &eax, &ebx, &ecx, &edx ) )
 			{
 				hasSupport = ( ecx & ( 1 << internal::ECX_AVX_BIT ) ) != 0;	  // ECX bit 28 = AVX
 				hasXsave = ( ecx & ( 1 << internal::ECX_OSXSAVE_BIT ) ) != 0; // ECX bit 27 = OSXSAVE
 			}
-#elif defined( _MSC_VER )
+#	elif defined( _MSC_VER )
 			std::array<int, 4> cpuInfo{};
 			__cpuid( cpuInfo.data(), internal::CPUID_FEATURE_INFO_LEAF );
 			hasSupport = ( cpuInfo[2] & ( 1 << internal::ECX_AVX_BIT ) ) != 0;	 // ECX bit 28 = AVX
 			hasXsave = ( cpuInfo[2] & ( 1 << internal::ECX_OSXSAVE_BIT ) ) != 0; // ECX bit 27 = OSXSAVE
-#endif
+#	endif
 
 			if ( !hasSupport || !hasXsave )
 				return false;
 
 			// Check OS support via XCR0
 			unsigned long long xcr0 = 0;
-#if defined( _MSC_VER )
+#	if defined( _MSC_VER )
 			xcr0 = _xgetbv( 0 );
-#elif defined( __GNUC__ ) || defined( __clang__ )
+#	elif defined( __GNUC__ ) || defined( __clang__ )
 			// Use inline assembly to avoid requiring -mxsave flag
 			unsigned int xcr0_eax, xcr0_edx;
 			__asm__ __volatile__( "xgetbv" : "=a"( xcr0_eax ), "=d"( xcr0_edx ) : "c"( 0 ) : );
 			xcr0 = ( static_cast<unsigned long long>( xcr0_edx ) << 32 ) | xcr0_eax;
-#else
+#	else
 			return false;
-#endif
+#	endif
 
 			// Bits 1 (XMM) and 2 (YMM) must be set
 			return ( xcr0 & 0x6 ) == 0x6;
 		}();
 
 		return s_hasAvx;
+#endif
 	}
 
 	//----------------------------------------------
@@ -133,11 +145,16 @@ namespace nfx::cpu
 
 	inline bool hasAvx2Support() noexcept
 	{
+#ifdef __AVX2__
+		// Compiled with AVX2 support - skip runtime check (compile-time guaranteed)
+		return true;
+#else
+		// No compile-time AVX2 - check at runtime
 		static const bool s_hasAvx2 = []() {
 			bool hasSupport = false;
 			bool hasXsave = false;
 
-#if defined( __GNUC__ ) || defined( __clang__ )
+#	if defined( __GNUC__ ) || defined( __clang__ )
 			// Check for AVX2 support in extended features
 			unsigned int eax, ebx, ecx, edx;
 			if ( __get_cpuid_count( internal::CPUID_EXTENDED_FEATURES_LEAF, 0, &eax, &ebx, &ecx, &edx ) )
@@ -150,7 +167,7 @@ namespace nfx::cpu
 			{
 				hasXsave = ( ecx & ( 1 << internal::ECX_OSXSAVE_BIT ) ) != 0;
 			}
-#elif defined( _MSC_VER )
+#	elif defined( _MSC_VER )
 			std::array<int, 4> cpuInfo{};
 
 			// Check for AVX2 support in extended features
@@ -160,29 +177,30 @@ namespace nfx::cpu
 			// Check for OSXSAVE in basic features
 			__cpuid( cpuInfo.data(), internal::CPUID_FEATURE_INFO_LEAF );
 			hasXsave = ( cpuInfo[2] & ( 1 << internal::ECX_OSXSAVE_BIT ) ) != 0; // ECX bit 27 = OSXSAVE
-#endif
+#	endif
 
 			if ( !hasSupport || !hasXsave )
 				return false;
 
 			// Check OS support via XCR0 (same as AVX - both need XMM and YMM state)
 			unsigned long long xcr0 = 0;
-#if defined( _MSC_VER )
+#	if defined( _MSC_VER )
 			xcr0 = _xgetbv( 0 );
-#elif defined( __GNUC__ ) || defined( __clang__ )
+#	elif defined( __GNUC__ ) || defined( __clang__ )
 			// Use inline assembly to avoid requiring -mxsave flag
 			unsigned int xcr0_eax, xcr0_edx;
 			__asm__ __volatile__( "xgetbv" : "=a"( xcr0_eax ), "=d"( xcr0_edx ) : "c"( 0 ) : );
 			xcr0 = ( static_cast<unsigned long long>( xcr0_edx ) << 32 ) | xcr0_eax;
-#else
+#	else
 			return false;
-#endif
+#	endif
 
 			// Bits 1 (XMM) and 2 (YMM) must be set
 			return ( xcr0 & 0x6 ) == 0x6;
 		}();
 
 		return s_hasAvx2;
+#endif
 	}
 
 	//----------------------------------------------
