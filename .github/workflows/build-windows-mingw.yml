@@ -3,24 +3,16 @@ name: nfx-cpu - Windows MinGW
 on:
   push:
     branches: [main]
-    paths:
-      - "include/**"
-      - "test/**"
-      - "samples/**"
-      - "benchmark/**"
-      - "CMakeLists.txt"
-      - "cmake/**"
-      - ".github/workflows/build-windows-mingw.yml"
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE.txt"
+      - ".gitignore"
   pull_request:
     branches: [main]
-    paths:
-      - "include/**"
-      - "test/**"
-      - "samples/**"
-      - "benchmark/**"
-      - "CMakeLists.txt"
-      - "cmake/**"
-      - ".github/workflows/build-windows-mingw.yml"
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE.txt"
+      - ".gitignore"
 
 env:
   BUILD_TYPE: Release
@@ -35,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 

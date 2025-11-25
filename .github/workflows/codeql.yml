@@ -2,27 +2,19 @@ name: CodeQL Security Analysis
 
 on:
   push:
-    branches: [ main ]
-    paths:
-      - 'include/**'
-      - 'test/**'
-      - 'samples/**'
-      - 'benchmark/**'
-      - 'CMakeLists.txt'
-      - 'cmake/**'
-      - '.github/workflows/codeql.yml'
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE.txt"
+      - ".gitignore"
   pull_request:
-    branches: [ main ]
-    paths:
-      - 'include/**'
-      - 'test/**'
-      - 'samples/**'
-      - 'benchmark/**'
-      - 'CMakeLists.txt'
-      - 'cmake/**'
-      - '.github/workflows/codeql.yml'
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE.txt"
+      - ".gitignore"
   schedule:
-    - cron: '0 0 * * 1'  # Weekly on Mondays at midnight UTC
+    - cron: "0 0 * * 1" # Weekly on Mondays at midnight UTC
 
 jobs:
   analyze:
@@ -36,11 +28,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp' ]
+        language: ["cpp"]
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
