@@ -208,27 +208,33 @@ int main() {
 
 ## Best Practices
 
-### Compile-Time vs Runtime Feature Verification
+### Runtime Feature Detection with Compile-Time Optimization
 
-nfx-cpu detects CPU capabilities at runtime, but your application needs compile-time flags to use those features. The library provides `verify*Support()` functions that combine both checks:
+nfx-cpu provides feature detection that automatically optimizes based on your compile flags:
+
+- **When compiled WITH a feature** (e.g., `-mavx2`): Detection returns `true` immediately (zero overhead, no CPUID call)
+- **When compiled WITHOUT a feature**: Performs runtime CPUID detection with cached results
+
+This means you can write a single codebase that adapts to any CPU:
 
 ```cpp
 #include <vector>
 #include <nfx/CPU.h>
 
 void processData(const std::vector<float>& data) {
-    // Safe: Returns true only if BOTH compiled with AVX2 AND CPU supports it
-    if (nfx::cpu::verifyAvx2Support()) {
+    // Automatically uses compile-time optimization when built with -mavx2
+    // Falls back to runtime detection when built without flags
+    if (nfx::cpu::hasAvx2Support()) {
         processData_AVX2(data);  // Safe to use AVX2 intrinsics
         return;
     }
 
-    if (nfx::cpu::verifyAvxSupport()) {
+    if (nfx::cpu::hasAvxSupport()) {
         processData_AVX(data);   // Safe to use AVX intrinsics
         return;
     }
 
-    if (nfx::cpu::verifySse42Support()) {
+    if (nfx::cpu::hasSse42Support()) {
         processData_SSE42(data); // Safe to use SSE4.2 intrinsics
         return;
     }
@@ -240,29 +246,34 @@ void processData(const std::vector<float>& data) {
 **Note on MSVC Behavior**: MSVC doesn't define `__SSE4_2__` preprocessor macro, even when SSE4.2 is available. The library handles this automatically:
 
 - On x64 builds, SSE4.2 is always assumed (all x64 CPUs since 2008 have it)
-- When `/arch:AVX` or `/arch:AVX2` is used, SSE4.2 is implied and verified
+- When `/arch:AVX` or `/arch:AVX2` is used, SSE4.2 is implied and detected
 
-### Manual Verification Pattern (Debug Builds)
+### Debug Verification Pattern
 
-For catching compile-time mismatches during development, use the library's verify functions with assertions:
+For development builds, use `verify*Support()` functions to catch cases where intrinsics are used without proper compile flags:
 
 ```cpp
 #include <cassert>
 #include <nfx/CPU.h>
 
-// Verify compile flags match detected capabilities
-void verifyCompileTimeSupport() {
-    // The library handles all compiler quirks internally
-    assert(nfx::cpu::verifySse42Support() || !nfx::cpu::hasSse42Support() &&
-           "CPU supports SSE4.2 but application wasn't compiled to use it");
+void processData(const std::vector<float>& data) {
+    // verify*Support() returns false if not compiled with the feature flag
+    // Triggers assertion if you try to use AVX2 intrinsics without -mavx2
+    if (nfx::cpu::verifyAvx2Support()) {
+        processData_AVX2(data);  // Compiler will error if -mavx2 not used
+        return;
+    }
 
-    assert(nfx::cpu::verifyAvxSupport() || !nfx::cpu::hasAvxSupport() &&
-           "CPU supports AVX but application wasn't compiled to use it");
-
-    assert(nfx::cpu::verifyAvx2Support() || !nfx::cpu::hasAvx2Support() &&
-           "CPU supports AVX2 but application wasn't compiled to use it");
+    // Graceful fallback if feature not compiled or not supported
+    processData_scalar(data);
 }
 ```
+
+The `verify*Support()` functions ensure:
+
+- **Compile-time safety**: Returns `false` if feature flag not used (prevents linking errors)
+- **Runtime safety**: Asserts if binary compiled with feature but CPU doesn't support it
+- **Best practice**: Use in debug builds to catch configuration mistakes early
 
 ## Installation & Packaging
 
@@ -339,13 +350,13 @@ See [TODO.md](TODO.md) for upcoming features and project roadmap.
 
 ## Changelog
 
-See the [changelog](CHANGELOG.md) for a detailed history of changes, new features, and bug fixes.
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes, new features, and bug fixes.
 
 ## License
 
 This project is licensed under the MIT License.
 
-## Dependencies
+## Development Dependencies
 
 - **[GoogleTest](https://github.com/google/googletest)**: Testing framework (BSD 3-Clause License) - Development only
 - **[Google Benchmark](https://github.com/google/benchmark)**: Performance benchmarking framework (Apache 2.0 License) - Development only
@@ -354,4 +365,4 @@ All dependencies are automatically fetched via CMake FetchContent when building 
 
 ---
 
-_Updated on November 12, 2025_
+_Updated on November 15, 2025_
