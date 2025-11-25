@@ -13,12 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **CPU Feature Detection**: Optimized `has*Support()` functions to skip runtime CPUID checks when compiled with feature flags
-
-  - When compiled with `-mavx2`, `__AVX2__`, etc., functions now return `true` immediately (zero overhead)
-  - Runtime CPUID detection only occurs when feature is not compile-time guaranteed
-  - Eliminates unnecessary static lambda initialization and CPUID calls in optimized builds
-  - Maintains backward compatibility with existing code
+- NIL
 
 ### Deprecated
 
@@ -35,6 +30,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - NIL
+
+## [0.1.2] - 2025-11-25
+
+### Changed
+
+- **CPU Feature Detection**: Optimized `has*Support()` functions to skip runtime CPUID checks when compiled with feature flags
+
+  - When compiled with `-mavx2`, `__AVX2__`, etc., functions now return `true` immediately (zero overhead)
+  - Runtime CPUID detection only occurs when feature is not compile-time guaranteed
+  - Eliminates unnecessary static lambda initialization and CPUID calls in optimized builds
+  - Maintains backward compatibility with existing code
 
 ## [0.1.1] - 2025-11-12
 

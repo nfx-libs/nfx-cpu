@@ -81,6 +81,15 @@ Project roadmap and task tracking for the nfx-cpu library.
 
 ### Done ✓
 
+#### v0.1.2 (2025-11-25)
+
+- [x] **CPU Feature Detection - Performance Optimization**
+  - [x] Skip runtime CPUID checks when features are compile-time guaranteed
+  - [x] Return immediately when `__AVX2__`, `__AVX__`, or `__SSE4_2__` macros are defined
+  - [x] Eliminate unnecessary static lambda initialization in optimized builds
+  - [x] Zero overhead detection when compiled with feature flags (-mavx2, etc.)
+  - [x] Maintain backward compatibility with runtime detection behavior
+
 #### v0.1.1 (2025-11-12)
 
 - [x] **CPU Feature Detection - OS Support Verification**
