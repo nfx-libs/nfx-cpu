@@ -1,24 +1,6 @@
 #==============================================================================
-# nfx-cpu - CMake Sources
+# nfx-cpu - CMake target
 #==============================================================================
-
-#----------------------------------------------
-# Conditional headers and sources
-#----------------------------------------------
-
-set(PUBLIC_HEADERS)
-
-list(APPEND PUBLIC_HEADERS
-	${NFX_CPU_INCLUDE_DIR}/nfx/cpu/CoreTopology.h
-	${NFX_CPU_INCLUDE_DIR}/nfx/cpu/FeatureDetection.h
-	${NFX_CPU_INCLUDE_DIR}/nfx/cpu/Identification.h
-
-	${NFX_CPU_INCLUDE_DIR}/nfx/detail/cpu/CoreTopology.inl
-	${NFX_CPU_INCLUDE_DIR}/nfx/detail/cpu/FeatureDetection.inl
-	${NFX_CPU_INCLUDE_DIR}/nfx/detail/cpu/Identification.inl
-
-	${NFX_CPU_INCLUDE_DIR}/nfx/CPU.h
-)
 
 #----------------------------------------------
 # Library definition

@@ -45,7 +45,7 @@ include(GNUInstallDirs)
 # Directory configuration
 #----------------------------------------------
 
-set(NFX_CPU_DIR          "${PROJECT_SOURCE_DIR}"    CACHE PATH  "Root directory"   )
+set(NFX_CPU_DIR          "${PROJECT_SOURCE_DIR}"   CACHE PATH  "Root directory"   )
 set(NFX_CPU_INCLUDE_DIR  "${NFX_CPU_DIR}/include"  CACHE PATH  "Include directory")
 
 #----------------------------------------------

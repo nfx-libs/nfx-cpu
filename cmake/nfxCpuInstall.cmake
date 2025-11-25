@@ -39,14 +39,14 @@ install(
 # Install library targets
 #----------------------------------------------
 
-set(INSTALL_TARGETS)
+set(install_targets)
 
 # Header-only interface library
-list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
+list(APPEND install_targets ${PROJECT_NAME})
 
-if(INSTALL_TARGETS)
+if(install_targets)
 	install(
-		TARGETS ${INSTALL_TARGETS}
+		TARGETS ${install_targets}
 		EXPORT nfx-cpu-targets
 		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 			COMPONENT Development
@@ -113,13 +113,18 @@ install(
 install(
 	FILES "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt"
 	DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
+	RENAME "LICENSE-${PROJECT_NAME}.txt"
 )
 
-install(
-	DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/licenses/"
-	DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
-	FILES_MATCHING PATTERN "LICENSE.txt-*"
-)
+file(GLOB license_files "${CMAKE_CURRENT_SOURCE_DIR}/licenses/LICENSE-*")
+foreach(license_file ${license_files})
+	get_filename_component(license_name ${license_file} NAME)
+	install(
+		FILES ${license_file}
+		DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
+		RENAME "${license_name}.txt"
+	)
+endforeach()
 
 #----------------------------------------------
 # Install documentation
