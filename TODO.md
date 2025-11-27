@@ -81,6 +81,13 @@ Project roadmap and task tracking for the nfx-cpu library.
 
 ### Done ✓
 
+#### v0.1.3 (2025-11-27)
+
+- [x] **CMake Packaging - Bug Fixes and Cleanup**
+  - [x] Remove incorrect runtime dependencies from DEB/RPM packages (header-only library)
+  - [x] Remove duplicate WiX tool detection
+  - [x] Simplify RPM architecture detection to use `uname` directly
+
 #### v0.1.2 (2025-11-25)
 
 - [x] **CPU Feature Detection - Performance Optimization**

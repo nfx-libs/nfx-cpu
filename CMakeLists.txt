@@ -9,7 +9,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(nfx-cpu
-	VERSION 0.1.2
+	VERSION 0.1.3
 	DESCRIPTION "Cross-platform C++ CPU feature detection and system identification library"
 	HOMEPAGE_URL "https://github.com/nfx-libs/nfx-cpu"
 	LANGUAGES CXX

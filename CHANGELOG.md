@@ -31,6 +31,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - NIL
 
+## [0.1.3] - 2025-11-27
+
+### Changed
+
+- Simplified CMake packaging configuration
+  - Removed duplicate WiX tool detection
+  - Simplified RPM architecture detection to use `uname` directly
+
+### Fixed
+
+- Removed incorrect runtime dependencies from DEB/RPM packages (header-only library)
+
 ## [0.1.2] - 2025-11-25
 
 ### Changed
