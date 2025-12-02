@@ -12,19 +12,6 @@ if(NOT NFX_CPU_INSTALL_PROJECT)
 endif()
 
 #----------------------------------------------
-# Installation paths configuration
-#----------------------------------------------
-
-include(GNUInstallDirs)
-
-message(STATUS "System installation paths:")
-message(STATUS "  Headers      : ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}")
-message(STATUS "  Library      : ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-message(STATUS "  Binaries     : ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}")
-message(STATUS "  CMake configs: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/nfx-cpu")
-message(STATUS "  Documentation: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}")
-
-#----------------------------------------------
 # Install headers
 #----------------------------------------------
 
@@ -96,6 +83,7 @@ configure_package_config_file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/nfx-cpu-config.cmake.in"
 	"${CMAKE_CURRENT_BINARY_DIR}/nfx-cpu-config.cmake"
 	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/nfx-cpu
+	PATH_VARS CMAKE_INSTALL_INCLUDEDIR CMAKE_INSTALL_LIBDIR
 )
 
 install(

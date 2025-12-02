@@ -16,20 +16,6 @@ project(nfx-cpu
 )
 
 #----------------------------------------------
-# Installation prefix configuration
-#----------------------------------------------
-
-# Set default installation path to nfx
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-	if(WIN32)
-		set(CMAKE_INSTALL_PREFIX "C:/Program Files/nfx" CACHE PATH "Installation directory" FORCE)
-	else()
-		set(CMAKE_INSTALL_PREFIX "/usr/local/nfx" CACHE PATH "Installation directory" FORCE)
-	endif()
-	message(STATUS "Setting install prefix to '${CMAKE_INSTALL_PREFIX}'")
-endif()
-
-#----------------------------------------------
 # Version configuration
 #----------------------------------------------
 
@@ -37,13 +23,6 @@ set(NFX_CPU_VERSION_MAJOR ${PROJECT_VERSION_MAJOR} CACHE INTERNAL "nfx-cpu major
 set(NFX_CPU_VERSION_MINOR ${PROJECT_VERSION_MINOR} CACHE INTERNAL "nfx-cpu minor version")
 set(NFX_CPU_VERSION_PATCH ${PROJECT_VERSION_PATCH} CACHE INTERNAL "nfx-cpu patch version")
 set(NFX_CPU_VERSION       ${PROJECT_VERSION}       CACHE INTERNAL "nfx-cpu version")
-
-#----------------------------------------------
-# Project metadata
-#----------------------------------------------
-
-set(NFX_CPU_LICENSE "MIT")
-set(NFX_CPU_LICENSE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 
 #----------------------------------------------
 # Testing setup
